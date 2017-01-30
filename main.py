@@ -38,6 +38,9 @@ def formBuilder(username="", password="", pw_match="", email="",
 
     head = '''
     <head>
+        <title>
+            User Signup
+        </title>
         <style>
             .error {
                 color: red;
