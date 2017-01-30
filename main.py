@@ -154,10 +154,15 @@ class MainHandler(webapp2.RequestHandler):
 class WelcomeHandler(webapp2.RequestHandler):
     def get(self):
         username = self.request.get("username")
+        head = '''
+        <title>
+            Welcome, {user}
+        </title>
+        '''.format(user = username)
         header = '''<h1>Welcome, {user}!</h1>'''.format(user = username)
         body = '''<h3>Thanks for signing up today!</h3>'''
 
-        content = header + body
+        content = head + header + body
 
         self.response.write(content)
 
