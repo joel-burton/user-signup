@@ -26,15 +26,12 @@ def emailValid(address):
     return email_RE.match(address)
 
 
-
-
-
 def formBuilder(username="", password="", pw_match="", email="",
                 username_error="", password_error="",
                 pw_match_error="", email_error=""):
     ''' This function handles building the html webpage that contains the
-        user signup form.
-    '''
+        user signup form.'''
+
 
     head = '''
     <head>
@@ -48,7 +45,9 @@ def formBuilder(username="", password="", pw_match="", email="",
         </style>
     </head>
     '''
+
     header = "<h1>User Signup</h1>"
+
     form = '''
     <form method="post">
         <table>
@@ -91,6 +90,7 @@ def formBuilder(username="", password="", pw_match="", email="",
     return content
 
 
+
 class MainHandler(webapp2.RequestHandler):
 
     def get(self):
@@ -108,31 +108,29 @@ class MainHandler(webapp2.RequestHandler):
         email_error    = ""
 
 
-
-        if len(username) == 0:
+        # check to make sure username has a value
+        if not username:
             username_error = "Please enter a username."
-
+        # check username for a valid entry
         elif not usernameValid(username):
             username = ""
             username_error = "That is not a valid username. Please try a new username."
 
-
-        if len(password) == 0:
+        # check to make sure password has a value
+        if not password:
             password_error = "Please enter a password."
-
+        # first check to see that the password is a valid entry
         elif not passwordValid(password):
             password_error = "That is not a valid password. Please enter a new password."
-
-        elif len(pw_match) == 0:
+        # then check to see if they entered a confirmation password
+        elif not pw_match:
             pw_match_error = "You didn't confirm your password. Please re-enter and confirm."
-
+        # IF you have BOTH a valid password AND a confirmation entry, then check to see if they match
         elif not matcher(password, pw_match):
             pw_match_error = "Your passwords did not match. Please try again."
 
-
         if email and not emailValid(email):
             email_error = "That is not a vaild email address."
-
 
         # reset the passwords to blank for security
         password = ""
@@ -146,8 +144,6 @@ class MainHandler(webapp2.RequestHandler):
             self.response.write(formBuilder(username, password, pw_match, email,
                                             username_error, password_error,
                                             pw_match_error, email_error))
-
-
 
 
 
@@ -165,10 +161,6 @@ class WelcomeHandler(webapp2.RequestHandler):
         content = head + header + body
 
         self.response.write(content)
-
-
-
-
 
 
 
