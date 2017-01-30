@@ -36,7 +36,15 @@ def formBuilder(username="", password="", pw_match="", email="",
         user signup form.
     '''
 
-
+    head = '''
+    <head>
+        <style>
+            .error {
+                color: red;
+            }
+        </style>
+    </head>
+    '''
     header = "<h1>User Signup</h1>"
     form = '''
     <form method="post">
@@ -76,7 +84,7 @@ def formBuilder(username="", password="", pw_match="", email="",
     )
 
 
-    content = header + form
+    content = head + header + form
     return content
 
 
@@ -96,42 +104,59 @@ class MainHandler(webapp2.RequestHandler):
         pw_match_error = ""
         email_error    = ""
 
+
+
         if len(username) == 0:
             username_error = "Please enter a username."
+
         elif not usernameValid(username):
             username = ""
             username_error = "That is not a valid username. Please try a new username."
 
+
         if len(password) == 0:
             password_error = "Please enter a password."
+
         elif not passwordValid(password):
             password_error = "That is not a valid password. Please enter a new password."
+
         elif len(pw_match) == 0:
             pw_match_error = "You didn't confirm your password. Please re-enter and confirm."
+
         elif not matcher(password, pw_match):
             pw_match_error = "Your passwords did not match. Please try again."
 
+
         if email and not emailValid(email):
             email_error = "That is not a vaild email address."
+
 
         # reset the passwords to blank for security
         password = ""
         pw_match = ""
 
 
+        if username_error == "" and password_error == "" and pw_match_error == "" and email_error =="":
+            self.redirect("/welcome?username={username}".format(username=username))
+
+        else:
+            self.response.write(formBuilder(username, password, pw_match, email,
+                                            username_error, password_error,
+                                            pw_match_error, email_error))
 
 
 
 
 
+class WelcomeHandler(webapp2.RequestHandler):
+    def get(self):
+        username = self.request.get("username")
+        header = '''<h1>Welcome, {user}!</h1>'''.format(user = username)
+        body = '''<h3>Thanks for signing up today!</h3>'''
 
-        self.response.write(formBuilder(username, password, pw_match, email,
-                                        username_error, password_error,
-                                        pw_match_error, email_error))
+        content = header + body
 
-
-
-
+        self.response.write(content)
 
 
 
@@ -142,5 +167,6 @@ class MainHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler)
+    ('/', MainHandler),
+    ('/welcome', WelcomeHandler),
 ], debug=True)
